@@ -26,12 +26,17 @@ def img_preprocess(img) :
 
 @sio.on('telemetry')
 def telemetry(sid, data) :
+    
     speed = float(data['speed'])
+    # start preprocessing
     image = Image.open(BytesIO(base64.b64decode(data['image'])))
     image = np.asarray(image)
     image = img_preprocess(image)
     image = np.array([image])
+    # end preprocessing
+    # start predicting
     steering_angle = float(model.predict(image))
+    # end predicting
     throttle = 1 - speed/speed_limit
     send_control(steering_angle, throttle)
 
